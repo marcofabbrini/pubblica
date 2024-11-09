@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabella Dinamica da Google Sheets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Exo 2', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+            word-wrap: break-word;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<table id="dataTable"></table>
+
+<script>
+// Link al nuovo CSV del foglio Google
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTrlkOP_1-x8WZZsFElIemgVdbWXgoSnifJgGVy_rqNW5svDTKernj1TAbe64sXXw/pub?gid=1066223678&single=true&output=csv';
+
+// Funzione per caricare i dati dal foglio e creare la tabella
+async function caricaDatiTabella() {
+    const response = await fetch(sheetUrl);
+    const text = await response.text();
+    const rows = text.split('\n').map(row => row.split(','));
+
+    const table = document.getElementById('dataTable');
+    table.innerHTML = ''; // Pulisce eventuali contenuti esistenti
+
+    rows.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+            const cellElement = rowIndex === 0 ? document.createElement('th') : document.createElement('td');
+            cellElement.textContent = cell;
+            tr.appendChild(cellElement);
+        });
+        table.appendChild(tr);
+    });
+}
+
+// Carica i dati e genera la tabella ogni 30 secondi
+caricaDatiTabella();
+setInterval(caricaDatiTabella, 30000);
+</script>
+
+</body>
+</html>
